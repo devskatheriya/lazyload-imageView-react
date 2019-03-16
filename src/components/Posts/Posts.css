@@ -1,0 +1,7 @@
+.post-conatiner {
+  border: 1px solid black;
+  width: 520px;
+  margin: auto;
+  overflow: auto;
+  height: 660px;
+}
