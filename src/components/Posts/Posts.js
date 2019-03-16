@@ -8,7 +8,9 @@ class Posts extends Component {
   state = {
     postsData: [],
     postId: null,
-    filterTitle: ""
+    filterTitle: "",
+    filterPosts: null,
+    selectedPost: []
   };
 
   componentDidMount() {
@@ -16,11 +18,23 @@ class Posts extends Component {
       .get("https://jsonplaceholder.typicode.com/photos?_limit=50")
       .then(response => {
         // console.log(typeof response.data);
+        // const {apidata}={...response.data,};
+
         this.setState({
           postsData: response.data
         });
       });
   }
+  deleteHandler = () => {
+    const postsArray = Object.values(this.state.postsData);
+    this.state.selectedPost.map(post => {
+      const postIndex = postsArray.indexOf(post);
+      postsArray.splice(postIndex, 1);
+      return true;
+    });
+
+    this.setState({ postsData: postsArray, selectedPost: [] });
+  };
   inputChangeHandler = target => {
     if (target.value.length >= 3) {
       this.setState({ filterTitle: target.value });
@@ -29,7 +43,13 @@ class Posts extends Component {
     }
     // console.log(this.state.filterTitle.length);
   };
-  myclickhandler = id => {};
+  myclickhandler = post => {
+    // console.log(post);
+    const selectedPost = this.state.selectedPost;
+    selectedPost.push(post);
+    this.setState({ selectedPost: selectedPost });
+    console.log(this.state.selectedPost);
+  };
 
   render() {
     let filterPosts;
@@ -41,6 +61,7 @@ class Posts extends Component {
       } else {
         filterPosts = this.state.postsData;
       }
+      //   this.setState({ filterPosts: filterPosts });
       filterPosts = Object.values(filterPosts).map(post => {
         return (
           <Post
@@ -50,7 +71,7 @@ class Posts extends Component {
             thumbnailUrl={post.thumbnailUrl}
             url={post.url}
             albumId={post.albumId}
-            //   clicked={() => this.myclickhandler(post.id)}
+            clicked={() => this.myclickhandler(post)}
           />
         );
       });
@@ -67,11 +88,12 @@ class Posts extends Component {
               onChange={event => this.inputChangeHandler(event.target)}
             />
             <Button
+              onClick={this.deleteHandler}
               variant="outline-danger"
               className="float-right"
               style={{
                 visibility:
-                  this.state.filterTitle.length >= 3 ? "visible" : "collapse"
+                  this.state.selectedPost.length > 0 ? "visible" : "collapse"
               }}
             >
               Delete

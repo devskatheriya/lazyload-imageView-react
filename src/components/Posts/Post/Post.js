@@ -11,7 +11,7 @@ class Post extends Component {
   };
   render() {
     return (
-      <div className="block">
+      <div className="block" onClick={this.props.clicked}>
         {/* <div className=""> */}
         <img
           id={this.props.id}
